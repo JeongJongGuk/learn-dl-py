@@ -16,11 +16,12 @@ from CNN.ResNet import ResNet
 MODEL_NAME = ResNet
 SAVE_NAME = "ResNet"
 DATASET = "C10"
+LOG_VERSION = "2"
 
 # ChcekPoint, Log 경로 지정
 CHECKPOINT_PATH_TO = "checkpoints/"
 CHECKPOINT = f"{CHECKPOINT_PATH_TO}{SAVE_NAME}_{DATASET}.h5"
-LOG = f"./logs/{SAVE_NAME}_{DATASET}_logs"
+LOG = f"./logs/{SAVE_NAME}_{DATASET}_{LOG_VERSION}_logs"
 
 # DataSet Hyperparameters
 INPUT_SHAPE = (32, 32, 3)
@@ -58,8 +59,8 @@ LOSS_FUNCTION = "categorical_crossentropy"
 
 # Learning Scheduler
 LEARN_SCHEDULE = tf.keras.optimizers.schedules.ExponentialDecay
-INITIAL_LR = 0.001
-decay_rate = 0.96
+INITIAL_LR = 0.1
+decay_rate = 0.97
 decay_steps = ITERATION * EPOCHS
 
 learning_rate = LEARN_SCHEDULE(
@@ -79,7 +80,7 @@ model = load_model._build(
     input_shape=INPUT_SHAPE,
     num_class=NUM_CLASSES,
     num_filter=NUM_FILTER,
-    dropout_rate=0.2,
+    dropout_rate=0.1,
 )
 
 model.summary()

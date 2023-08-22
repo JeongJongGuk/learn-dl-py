@@ -175,10 +175,6 @@ class AlexNet:
 
         # Model Build
         model = tf.keras.models.Model(inputs=input, outputs=output, name="AlexNet")
-        # 모델 시각화 그래프 생성 후 이미지 파일로 저장
-        plot_model(
-            model, to_file="AlexNet.png", show_shapes=True, show_layer_names=True
-        )
 
         return model
 
@@ -192,3 +188,6 @@ if __name__ == "__main__":
         drop_rate=0.5,
         compression=0.25,
     )
+
+    # 모델 시각화 그래프 생성 후 이미지 파일로 저장
+    plot_model(model, to_file="AlexNet.png", show_shapes=True, show_layer_names=True)

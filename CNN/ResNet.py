@@ -243,9 +243,6 @@ class ResNet:
         # Model Build
         model = tf.keras.models.Model(inputs=input, outputs=output)
 
-        # 모델 시각화 그래프 생성 후 이미지 파일로 저장
-        plot_model(model, to_file="ResNet.png", show_shapes=True, show_layer_names=True)
-
         return model
 
 
@@ -257,3 +254,6 @@ if __name__ == "__main__":
         num_filter=16,
         dropout_rate=0.2,
     )
+
+    # 모델 시각화 그래프 생성 후 이미지 파일로 저장
+    plot_model(model, to_file="ResNet.png", show_shapes=True, show_layer_names=True)
