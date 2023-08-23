@@ -5,36 +5,51 @@ from CNN.AlexNet import AlexNet
 from CNN.DenseNet import DenseNet
 from CNN.ResNet import ResNet
 
-################################################################################
+
 """
 1. AlexNet
 2. ResNet
 3. DensNet
-
 """
+
 # Model Save 이름 지정
-MODEL_NAME = ResNet
-SAVE_NAME = "ResNet"
+LOAD_MODEL = AlexNet
+SAVE_NAME = "AlexNet"
 DATASET = "C10"
-LOG_VERSION = "2"
+LOG_VERSION = "with_bn"
 
 # ChcekPoint, Log 경로 지정
-CHECKPOINT_PATH_TO = "checkpoints/"
-CHECKPOINT = f"{CHECKPOINT_PATH_TO}{SAVE_NAME}_{DATASET}.h5"
+CHECKPOINT = f"checkpoints/{SAVE_NAME}_{DATASET}.h5"
 LOG = f"./logs/{SAVE_NAME}_{DATASET}_{LOG_VERSION}_logs"
 
 # DataSet Hyperparameters
 INPUT_SHAPE = (32, 32, 3)
 NUM_CLASSES = 10
-NUM_FILTER = 16
 
 """
 AlexNet:
+    # Model Hyperparameters
+    NUM_FILTER = 64
+    DROPOUT_RATE = 0.5
+
+    # Learning Hyperparameters
+    ITERATION = 1
+    EPOCHS = 400
+    BATCH_SIZE = 128
+    OPTIMIZER = tf.keras.optimizers.Nadam
+    LOSS_FUNCTION = "categorical_crossentropy"
+
+    # Learning Scheduler
+    LEARN_SCHEDULE = tf.keras.optimizers.schedules.ExponentialDecay
+    INITIAL_LR = 0.1
+    DECAY_RATE = 0.97
+
+AlexNet_no_bn:
     NUM_FILTER = 64
     ITERATION = 1
     EPOCHS = 400
     BATCH_SIZE = 128
-    
+
 ResNet:
     NUM_FILTER = 16
     ITERATION = 1
@@ -48,6 +63,10 @@ DenseNet:
     BATCH_SIZE = 256
 """
 
+# Model Hyperparameters
+NUM_FILTER = 64
+DROPOUT_RATE = 0.5
+
 # Learning Hyperparameters
 ITERATION = 1
 EPOCHS = 400
@@ -55,18 +74,15 @@ BATCH_SIZE = 128
 OPTIMIZER = tf.keras.optimizers.Nadam
 LOSS_FUNCTION = "categorical_crossentropy"
 
-################################################################################
-
 # Learning Scheduler
 LEARN_SCHEDULE = tf.keras.optimizers.schedules.ExponentialDecay
 INITIAL_LR = 0.1
-decay_rate = 0.97
-decay_steps = ITERATION * EPOCHS
+DECAY_RATE = 0.97
 
 learning_rate = LEARN_SCHEDULE(
     initial_learning_rate=INITIAL_LR,
-    decay_steps=decay_steps,
-    decay_rate=decay_rate,
+    decay_steps=EPOCHS,
+    decay_rate=DECAY_RATE,
     staircase=True,
 )
 
@@ -74,15 +90,13 @@ learning_rate = LEARN_SCHEDULE(
 train_images, train_labels, test_images, test_labels = load_cifar10()
 
 # Load Model
-load_model = MODEL_NAME()
-
-model = load_model._build(
+model = LOAD_MODEL()._build(
     input_shape=INPUT_SHAPE,
     num_class=NUM_CLASSES,
     num_filter=NUM_FILTER,
-    dropout_rate=0.1,
+    dropout_rate=DROPOUT_RATE,
+    compression=0.25,
 )
-
 model.summary()
 
 # Define callbacks
@@ -102,8 +116,6 @@ checkpoint_callback = callbacks.ModelCheckpoint(
 
 # Define callback list
 callback_list = [learning_rate_callback, tensorboard_callback, checkpoint_callback]
-
-################################################################################
 
 # Train the model
 for iteration in range(ITERATION):
@@ -132,5 +144,3 @@ for iteration in range(ITERATION):
         callbacks=callback_list,
         validation_data=(test_images, test_labels),
     )
-
-################################################################################

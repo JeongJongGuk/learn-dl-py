@@ -1,6 +1,6 @@
 import tensorflow as tf
-from keras.utils import plot_model
 from keras import layers
+from keras.utils import plot_model
 
 
 class AlexNet:
@@ -22,7 +22,7 @@ class AlexNet:
             kernel_initializer="HeNormal",
             name=name + "_3x3_conv",
         )(x)
-        x = layers.BatchNormalization(name=name + "_bn")(x)
+        # x = layers.BatchNormalization(name=name + "_bn")(x)
         x = layers.Activation("relu", name=name + "_relu")(x)
 
         # MaxPool2D
@@ -41,7 +41,7 @@ class AlexNet:
             kernel_initializer="HeNormal",
             name=name + "_3x3_conv",
         )(x)
-        x = layers.BatchNormalization(name=name + "_bn")(x)
+        # x = layers.BatchNormalization(name=name + "_bn")(x)
         x = layers.Activation("relu", name=name + "_relu")(x)
 
         # MaxPool2D
@@ -60,7 +60,7 @@ class AlexNet:
             kernel_initializer="HeNormal",
             name=name + "_3x3_conv_1",
         )(x)
-        x = layers.BatchNormalization(name=name + "_bn_1")(x)
+        # x = layers.BatchNormalization(name=name + "_bn_1")(x)
         x = layers.Activation("relu", name=name + "_relu_1")(x)
 
         # Conv2D_2
@@ -73,7 +73,7 @@ class AlexNet:
             kernel_initializer="HeNormal",
             name=name + "_3x3_conv_2",
         )(x)
-        x = layers.BatchNormalization(name=name + "_bn_2")(x)
+        # x = layers.BatchNormalization(name=name + "_bn_2")(x)
         x = layers.Activation("relu", name=name + "_relu_2")(x)
 
         # Conv2D_3
@@ -86,7 +86,7 @@ class AlexNet:
             kernel_initializer="HeNormal",
             name=name + "_3x3_conv_3",
         )(x)
-        x = layers.BatchNormalization(name=name + "_bn_3")(x)
+        # x = layers.BatchNormalization(name=name + "_bn_3")(x)
         x = layers.Activation("relu", name=name + "_relu_3")(x)
 
         # MaxPool2D
@@ -118,7 +118,7 @@ class AlexNet:
             kernel_initializer="HeNormal",
             name=name + "_dense_1",
         )(x)
-        x = layers.BatchNormalization(name=name + "_bn_1")(x)
+        # x = layers.BatchNormalization(name=name + "_bn_1")(x)
         x = layers.Activation("relu", name=name + "_relu_1")(x)
 
         # Dense_2
@@ -130,7 +130,7 @@ class AlexNet:
             kernel_initializer="HeNormal",
             name=name + "_dense_2",
         )(x)
-        x = layers.BatchNormalization(name=name + "_bn_2")(x)
+        # x = layers.BatchNormalization(name=name + "_bn_2")(x)
         x = layers.Activation("relu", name=name + "_relu_2")(x)
 
         # Dense_3
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     # 모델 시각화 그래프 생성 후 이미지 파일로 저장
     plot_model(
         model,
-        to_file="model_image/AlexNet.png",
+        to_file="model_image/AlexNet_no_bn.png",
         show_shapes=True,
         show_layer_names=True,
         show_layer_activations=True,

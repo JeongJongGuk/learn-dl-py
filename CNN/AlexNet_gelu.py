@@ -23,7 +23,7 @@ class AlexNet:
             name=name + "_3x3_conv",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn")(x)
-        x = layers.Activation("relu", name=name + "_relu")(x)
+        x = layers.Activation("gelu", name=name + "_gelu")(x)
 
         # MaxPool2D
         x = layers.MaxPooling2D((2, 2), name=name + "_pool")(x)
@@ -42,7 +42,7 @@ class AlexNet:
             name=name + "_3x3_conv",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn")(x)
-        x = layers.Activation("relu", name=name + "_relu")(x)
+        x = layers.Activation("gelu", name=name + "_gelu")(x)
 
         # MaxPool2D
         x = layers.MaxPool2D((2, 2), name=name + "_pool")(x)
@@ -61,7 +61,7 @@ class AlexNet:
             name=name + "_3x3_conv_1",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn_1")(x)
-        x = layers.Activation("relu", name=name + "_relu_1")(x)
+        x = layers.Activation("gelu", name=name + "_gelu_1")(x)
 
         # Conv2D_2
         x = layers.Conv2D(
@@ -74,7 +74,7 @@ class AlexNet:
             name=name + "_3x3_conv_2",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn_2")(x)
-        x = layers.Activation("relu", name=name + "_relu_2")(x)
+        x = layers.Activation("gelu", name=name + "_gelu_2")(x)
 
         # Conv2D_3
         x = layers.Conv2D(
@@ -87,7 +87,7 @@ class AlexNet:
             name=name + "_3x3_conv_3",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn_3")(x)
-        x = layers.Activation("relu", name=name + "_relu_3")(x)
+        x = layers.Activation("gelu", name=name + "_gelu_3")(x)
 
         # MaxPool2D
         x = layers.MaxPool2D((2, 2), name=name + "_pool")(x)
@@ -119,7 +119,7 @@ class AlexNet:
             name=name + "_dense_1",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn_1")(x)
-        x = layers.Activation("relu", name=name + "_relu_1")(x)
+        x = layers.Activation("gelu", name=name + "_gelu_1")(x)
 
         # Dense_2
         if dropout_rate:
@@ -131,7 +131,7 @@ class AlexNet:
             name=name + "_dense_2",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn_2")(x)
-        x = layers.Activation("relu", name=name + "_relu_2")(x)
+        x = layers.Activation("gelu", name=name + "_gelu_2")(x)
 
         # Dense_3
         x = layers.Dense(
