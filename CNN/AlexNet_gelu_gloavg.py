@@ -3,8 +3,8 @@ from keras import layers
 from keras.utils import plot_model
 
 
-class AlexNet_gelu:
-    """AlexNet_gelu"""
+class AlexNet_gelu_gloavg:
+    """AlexNet_gelu_gloavg"""
 
     def __init__(
         self,
@@ -94,7 +94,7 @@ class AlexNet_gelu:
 
         return x
 
-    def classifier(self, x, num_class, dropout_rate, compression, name):
+    def classifier(self, x, num_class, num_filter, name):
         """
         Flatten -> Dropout -> Dense -> Dropout -> Dense -> Softmax
 
@@ -105,35 +105,36 @@ class AlexNet_gelu:
             compresssion: Dense Unit 압축률
         """
 
-        # Flatten
-        x = layers.Flatten()(x)
-        dense_unit = x.shape[-1] * compression
-
-        # Dense_1
-        if dropout_rate:
-            x = layers.Dropout(rate=dropout_rate, name="dropout_1")(x)
-        x = layers.Dense(
-            units=dense_unit,
+        # Conv2D_1
+        x = layers.Conv2D(
+            filters=num_filter,
+            kernel_size=3,
+            strides=(1, 1),
+            padding="same",
             use_bias=False,
             kernel_initializer="HeNormal",
-            name=name + "_dense_1",
+            name=name + "_3x3_conv_1",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn_1")(x)
         x = layers.Activation("gelu", name=name + "_gelu_1")(x)
 
-        # Dense_2
-        if dropout_rate:
-            x = layers.Dropout(rate=dropout_rate, name="dropout_2")(x)
-        x = layers.Dense(
-            units=dense_unit / 2,
+        # Conv2D_2
+        x = layers.Conv2D(
+            filters=num_filter,
+            kernel_size=3,
+            strides=(1, 1),
+            padding="same",
             use_bias=False,
             kernel_initializer="HeNormal",
-            name=name + "_dense_2",
+            name=name + "_3x3_conv_2",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn_2")(x)
         x = layers.Activation("gelu", name=name + "_gelu_2")(x)
 
-        # Dense_3
+        # Gloavg
+        x = layers.GlobalAveragePooling2D(name=name + "gloavg")(x)
+
+        # Dense
         x = layers.Dense(
             units=num_class,
             use_bias=True,
@@ -170,17 +171,19 @@ class AlexNet_gelu:
 
         # Output
         output = self.classifier(
-            x, num_class, dropout_rate, compression, name="classifier"
+            x, num_class, num_filter=num_filter * 8, name="classifier"
         )
 
         # Model Build
-        model = tf.keras.models.Model(inputs=input, outputs=output, name="AlexNet_gelu")
+        model = tf.keras.models.Model(
+            inputs=input, outputs=output, name="AlexNet_gelu_gloavg"
+        )
 
         return model
 
 
 if __name__ == "__main__":
-    model = AlexNet_gelu()._build(
+    model = AlexNet_gelu_gloavg()._build(
         input_shape=(32, 32, 3),
         num_class=10,
         num_filter=64,
@@ -191,7 +194,7 @@ if __name__ == "__main__":
     # 모델 시각화 그래프 생성 후 이미지 파일로 저장
     plot_model(
         model,
-        to_file="model_image/AlexNet_gelu.png",
+        to_file="model_image/AlexNet_gelu_gloavg.png",
         show_shapes=True,
         show_layer_names=True,
         show_layer_activations=True,

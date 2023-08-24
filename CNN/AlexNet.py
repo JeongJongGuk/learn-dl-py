@@ -1,6 +1,6 @@
 import tensorflow as tf
-from keras.utils import plot_model
 from keras import layers
+from keras.utils import plot_model
 
 
 class AlexNet:
@@ -136,7 +136,7 @@ class AlexNet:
         # Dense_3
         x = layers.Dense(
             units=num_class,
-            use_bias=False,
+            use_bias=True,
             kernel_initializer="HeNormal",
             name=name + "_dense_3",
         )(x)

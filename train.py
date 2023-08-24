@@ -1,7 +1,15 @@
 import tensorflow as tf
 from keras import callbacks
 from dataset import load_cifar10, augment_image
+
 from CNN.AlexNet import AlexNet
+from CNN.AlexNet_nb import AlexNet_nb
+from CNN.AlexNet_gelu import AlexNet_gelu
+from CNN.AlexNet_gelu_gloavg import AlexNet_gelu_gloavg
+from CNN.AlexNet_gloavg import AlexNet_gloavg
+from CNN.AlexNet_res import AlexNet_res
+from CNN.AlexNet_res_deep import AlexNet_res_deep
+
 from CNN.DenseNet import DenseNet
 from CNN.ResNet import ResNet
 
@@ -13,42 +21,48 @@ from CNN.ResNet import ResNet
 """
 
 # Model Save 이름 지정
-LOAD_MODEL = AlexNet
-SAVE_NAME = "AlexNet"
+LOAD_MODEL = AlexNet_res_deep
+SAVE_NAME = "AlexNet_res_deep"
 DATASET = "C10"
-LOG_VERSION = "with_bn"
+# LOG_VERSION = ""
 
 # ChcekPoint, Log 경로 지정
 CHECKPOINT = f"checkpoints/{SAVE_NAME}_{DATASET}.h5"
-LOG = f"./logs/{SAVE_NAME}_{DATASET}_{LOG_VERSION}_logs"
+# LOG = f"./logs/{SAVE_NAME}_{DATASET}_{LOG_VERSION}_logs"
+LOG = f"./logs/{SAVE_NAME}_{DATASET}_logs"
 
 # DataSet Hyperparameters
 INPUT_SHAPE = (32, 32, 3)
 NUM_CLASSES = 10
 
 """
-AlexNet:
+AlexNet:    Total params: 6,283,722 (23.97 MB)
     # Model Hyperparameters
     NUM_FILTER = 64
     DROPOUT_RATE = 0.5
 
     # Learning Hyperparameters
     ITERATION = 1
-    EPOCHS = 400
+    EPOCHS = 100
     BATCH_SIZE = 128
     OPTIMIZER = tf.keras.optimizers.Nadam
     LOSS_FUNCTION = "categorical_crossentropy"
 
     # Learning Scheduler
-    LEARN_SCHEDULE = tf.keras.optimizers.schedules.ExponentialDecay
     INITIAL_LR = 0.1
-    DECAY_RATE = 0.97
+    DECAY_RATE = 0.98
 
-AlexNet_no_bn:
-    NUM_FILTER = 64
-    ITERATION = 1
-    EPOCHS = 400
-    BATCH_SIZE = 128
+AlexNet_nb: Total params: 6,276,234 (23.94 MB)
+
+AlexNet_gloavg: Total params: 5,102,026 (19.46 MB)
+
+AlexNet_gelu: Total params: 6,283,722 (23.97 MB)
+
+AlexNet_gelu_gloavg: Total params: 5,102,026 (19.46 MB)
+
+AlexNet_res: Total params: 1,229,130 (4.69 MB)
+
+AlexNet_res_deep: Total params: 2781002 (10.61 MB)
 
 ResNet:
     NUM_FILTER = 16
@@ -69,15 +83,15 @@ DROPOUT_RATE = 0.5
 
 # Learning Hyperparameters
 ITERATION = 1
-EPOCHS = 400
+EPOCHS = 100
 BATCH_SIZE = 128
 OPTIMIZER = tf.keras.optimizers.Nadam
 LOSS_FUNCTION = "categorical_crossentropy"
 
 # Learning Scheduler
-LEARN_SCHEDULE = tf.keras.optimizers.schedules.ExponentialDecay
 INITIAL_LR = 0.1
-DECAY_RATE = 0.97
+DECAY_RATE = 0.98
+LEARN_SCHEDULE = tf.keras.optimizers.schedules.ExponentialDecay
 
 learning_rate = LEARN_SCHEDULE(
     initial_learning_rate=INITIAL_LR,

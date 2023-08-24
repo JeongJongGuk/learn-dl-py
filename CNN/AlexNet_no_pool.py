@@ -1,6 +1,6 @@
 import tensorflow as tf
-from keras.utils import plot_model
 from keras import layers
+from keras.utils import plot_model
 
 
 class AlexNet:
@@ -23,10 +23,20 @@ class AlexNet:
             name=name + "_3x3_conv",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn")(x)
-        x = layers.Activation("gelu", name=name + "_gelu")(x)
+        x = layers.Activation("relu", name=name + "_relu")(x)
 
-        # MaxPool2D
-        x = layers.MaxPooling2D((2, 2), name=name + "_pool")(x)
+        # SubSampling Conv2D
+        x = layers.Conv2D(
+            filters=num_filter,
+            kernel_size=3,
+            strides=(2, 2),
+            padding="same",
+            use_bias=False,
+            kernel_initializer="HeNormal",
+            name=name + "_3x3_sub_conv",
+        )(x)
+        x = layers.BatchNormalization(name=name + "_sub_bn")(x)
+        x = layers.Activation("relu", name=name + "_sub_relu")(x)
 
         return x
 
@@ -42,10 +52,20 @@ class AlexNet:
             name=name + "_3x3_conv",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn")(x)
-        x = layers.Activation("gelu", name=name + "_gelu")(x)
+        x = layers.Activation("relu", name=name + "_relu")(x)
 
-        # MaxPool2D
-        x = layers.MaxPool2D((2, 2), name=name + "_pool")(x)
+        # SubSampling Conv2D
+        x = layers.Conv2D(
+            filters=num_filter,
+            kernel_size=3,
+            strides=(2, 2),
+            padding="same",
+            use_bias=False,
+            kernel_initializer="HeNormal",
+            name=name + "_3x3_sub_conv",
+        )(x)
+        x = layers.BatchNormalization(name=name + "_sub_bn")(x)
+        x = layers.Activation("relu", name=name + "_sub_relu")(x)
 
         return x
 
@@ -61,7 +81,7 @@ class AlexNet:
             name=name + "_3x3_conv_1",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn_1")(x)
-        x = layers.Activation("gelu", name=name + "_gelu_1")(x)
+        x = layers.Activation("relu", name=name + "_relu_1")(x)
 
         # Conv2D_2
         x = layers.Conv2D(
@@ -74,7 +94,7 @@ class AlexNet:
             name=name + "_3x3_conv_2",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn_2")(x)
-        x = layers.Activation("gelu", name=name + "_gelu_2")(x)
+        x = layers.Activation("relu", name=name + "_relu_2")(x)
 
         # Conv2D_3
         x = layers.Conv2D(
@@ -87,10 +107,20 @@ class AlexNet:
             name=name + "_3x3_conv_3",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn_3")(x)
-        x = layers.Activation("gelu", name=name + "_gelu_3")(x)
+        x = layers.Activation("relu", name=name + "_relu_3")(x)
 
-        # MaxPool2D
-        x = layers.MaxPool2D((2, 2), name=name + "_pool")(x)
+        # SubSampling Conv2D
+        x = layers.Conv2D(
+            filters=num_filter,
+            kernel_size=3,
+            strides=(2, 2),
+            padding="same",
+            use_bias=False,
+            kernel_initializer="HeNormal",
+            name=name + "_3x3_sub_conv",
+        )(x)
+        x = layers.BatchNormalization(name=name + "_sub_bn")(x)
+        x = layers.Activation("relu", name=name + "_sub_relu")(x)
 
         return x
 
@@ -119,7 +149,7 @@ class AlexNet:
             name=name + "_dense_1",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn_1")(x)
-        x = layers.Activation("gelu", name=name + "_gelu_1")(x)
+        x = layers.Activation("relu", name=name + "_relu_1")(x)
 
         # Dense_2
         if dropout_rate:
@@ -131,12 +161,12 @@ class AlexNet:
             name=name + "_dense_2",
         )(x)
         x = layers.BatchNormalization(name=name + "_bn_2")(x)
-        x = layers.Activation("gelu", name=name + "_gelu_2")(x)
+        x = layers.Activation("relu", name=name + "_relu_2")(x)
 
         # Dense_3
         x = layers.Dense(
             units=num_class,
-            use_bias=False,
+            use_bias=True,
             kernel_initializer="HeNormal",
             name=name + "_dense_3",
         )(x)

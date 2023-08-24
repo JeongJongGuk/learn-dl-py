@@ -3,8 +3,8 @@ from keras import layers
 from keras.utils import plot_model
 
 
-class AlexNet:
-    """AlexNet"""
+class AlexNet_nb:
+    """AlexNet_nb"""
 
     def __init__(
         self,
@@ -18,11 +18,10 @@ class AlexNet:
             kernel_size=3,
             strides=(1, 1),
             padding="same",
-            use_bias=False,
+            use_bias=True,
             kernel_initializer="HeNormal",
             name=name + "_3x3_conv",
         )(x)
-        # x = layers.BatchNormalization(name=name + "_bn")(x)
         x = layers.Activation("relu", name=name + "_relu")(x)
 
         # MaxPool2D
@@ -37,11 +36,10 @@ class AlexNet:
             kernel_size=3,
             strides=(1, 1),
             padding="same",
-            use_bias=False,
+            use_bias=True,
             kernel_initializer="HeNormal",
             name=name + "_3x3_conv",
         )(x)
-        # x = layers.BatchNormalization(name=name + "_bn")(x)
         x = layers.Activation("relu", name=name + "_relu")(x)
 
         # MaxPool2D
@@ -56,11 +54,10 @@ class AlexNet:
             kernel_size=3,
             strides=(1, 1),
             padding="same",
-            use_bias=False,
+            use_bias=True,
             kernel_initializer="HeNormal",
             name=name + "_3x3_conv_1",
         )(x)
-        # x = layers.BatchNormalization(name=name + "_bn_1")(x)
         x = layers.Activation("relu", name=name + "_relu_1")(x)
 
         # Conv2D_2
@@ -69,11 +66,10 @@ class AlexNet:
             kernel_size=3,
             strides=(1, 1),
             padding="same",
-            use_bias=False,
+            use_bias=True,
             kernel_initializer="HeNormal",
             name=name + "_3x3_conv_2",
         )(x)
-        # x = layers.BatchNormalization(name=name + "_bn_2")(x)
         x = layers.Activation("relu", name=name + "_relu_2")(x)
 
         # Conv2D_3
@@ -82,11 +78,10 @@ class AlexNet:
             kernel_size=3,
             strides=(1, 1),
             padding="same",
-            use_bias=False,
+            use_bias=True,
             kernel_initializer="HeNormal",
             name=name + "_3x3_conv_3",
         )(x)
-        # x = layers.BatchNormalization(name=name + "_bn_3")(x)
         x = layers.Activation("relu", name=name + "_relu_3")(x)
 
         # MaxPool2D
@@ -114,11 +109,10 @@ class AlexNet:
             x = layers.Dropout(rate=dropout_rate, name="dropout_1")(x)
         x = layers.Dense(
             units=dense_unit,
-            use_bias=False,
+            use_bias=True,
             kernel_initializer="HeNormal",
             name=name + "_dense_1",
         )(x)
-        # x = layers.BatchNormalization(name=name + "_bn_1")(x)
         x = layers.Activation("relu", name=name + "_relu_1")(x)
 
         # Dense_2
@@ -126,17 +120,16 @@ class AlexNet:
             x = layers.Dropout(rate=dropout_rate, name="dropout_2")(x)
         x = layers.Dense(
             units=dense_unit / 2,
-            use_bias=False,
+            use_bias=True,
             kernel_initializer="HeNormal",
             name=name + "_dense_2",
         )(x)
-        # x = layers.BatchNormalization(name=name + "_bn_2")(x)
         x = layers.Activation("relu", name=name + "_relu_2")(x)
 
         # Dense_3
         x = layers.Dense(
             units=num_class,
-            use_bias=False,
+            use_bias=True,
             kernel_initializer="HeNormal",
             name=name + "_dense_3",
         )(x)
@@ -174,13 +167,13 @@ class AlexNet:
         )
 
         # Model Build
-        model = tf.keras.models.Model(inputs=input, outputs=output, name="AlexNet")
+        model = tf.keras.models.Model(inputs=input, outputs=output, name="AlexNet_nb")
 
         return model
 
 
 if __name__ == "__main__":
-    model = AlexNet()._build(
+    model = AlexNet_nb()._build(
         input_shape=(32, 32, 3),
         num_class=10,
         num_filter=64,
@@ -191,7 +184,7 @@ if __name__ == "__main__":
     # 모델 시각화 그래프 생성 후 이미지 파일로 저장
     plot_model(
         model,
-        to_file="model_image/AlexNet_no_bn.png",
+        to_file="model_image/AlexNet_nb.png",
         show_shapes=True,
         show_layer_names=True,
         show_layer_activations=True,
