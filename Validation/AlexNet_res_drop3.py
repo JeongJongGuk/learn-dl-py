@@ -2,11 +2,19 @@ import tensorflow as tf
 from keras import layers
 from keras.utils import plot_model
 
-model_name = "AlexNet_res_deep_deep_drop"
+model_name = "AlexNet_res_drop3"
+
+"""
+skip_connection: 2 * Conv2D
+conv_pool: 3 * skip_connection
+model: 3 * conv_pool 
+
+layers: 1 + 2 * 3 * 3 + 1 = 20 layers
+"""
 
 
-class AlexNet_res_deep_deep_drop:
-    """AlexNet_res_deep_deep_drop"""
+class AlexNet_res_drop3:
+    """AlexNet_res_drop"""
 
     def __init__(
         self,
@@ -14,7 +22,7 @@ class AlexNet_res_deep_deep_drop:
         pass
 
     def skip_connection_sub(self, x, num_filter, conv_dropout_rate, name, number):
-        """
+        """skip_connection_sub
         Args:
             x: Input tensor
             num_filter: Number of Conv2D filter
@@ -64,6 +72,14 @@ class AlexNet_res_deep_deep_drop:
         return x
 
     def skip_connection(self, x, num_filter, conv_dropout_rate, name, number):
+        """skip_connection
+        Args:
+            x: Input tensor
+            num_filter: Number of Conv2D filter
+            name: str
+            number: str
+        """
+
         # Conv2D_Skip
         x1 = layers.Conv2D(
             filters=num_filter,
@@ -97,7 +113,7 @@ class AlexNet_res_deep_deep_drop:
         return x
 
     def conv_pool_1(self, x, num_filter, conv_dropout_rate, name):
-        """
+        """conv_pool_1
         Input Shape: 32x32
         Output Shape: 32x32
         """
@@ -123,7 +139,7 @@ class AlexNet_res_deep_deep_drop:
         return x
 
     def conv_pool_2(self, x, num_filter, conv_dropout_rate, name):
-        """
+        """conv_pool_2
         Input Shape: 32x32
         Output Shape: 16x16
         """
@@ -136,7 +152,7 @@ class AlexNet_res_deep_deep_drop:
         return x
 
     def conv_pool_3(self, x, num_filter, conv_dropout_rate, name):
-        """
+        """conv_pool_3
         Input Shape: 16x16
         Output Shape: 8x8
         """
@@ -179,7 +195,6 @@ class AlexNet_res_deep_deep_drop:
         num_filter,
         dropout_rate,
         conv_dropout_rate,
-        compression,
     ):
         """
         AlexNet Build
@@ -229,12 +244,12 @@ class AlexNet_res_deep_deep_drop:
 
 
 if __name__ == "__main__":
-    model = AlexNet_res_deep_deep_drop()._build(
+    model = AlexNet_res_drop3()._build(
         input_shape=(32, 32, 3),
         num_class=10,
         num_filter=64,
-        dropout_rate=0.5,
-        compression=0.25,
+        dropout_rate=0.3,
+        conv_dropout_rate=0.2,
     )
 
     # 모델 시각화 그래프 생성 후 이미지 파일로 저장
@@ -244,5 +259,4 @@ if __name__ == "__main__":
         show_shapes=True,
         show_layer_names=True,
         show_layer_activations=True,
-        show_trainable=True,
     )

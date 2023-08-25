@@ -2,22 +2,17 @@ import tensorflow as tf
 from keras import callbacks
 from dataset import load_cifar10, augment_image
 
-from AlexNet.AlexNet import AlexNet
-from AlexNet.AlexNet_nb import AlexNet_nb
-from AlexNet.AlexNet_gelu import AlexNet_gelu
-from AlexNet.AlexNet_gelu_gloavg import AlexNet_gelu_gloavg
-from AlexNet.AlexNet_gloavg import AlexNet_gloavg
-from AlexNet.AlexNet_res import AlexNet_res
-from AlexNet.AlexNet_res_deep import AlexNet_res_deep
-from AlexNet.AlexNet_res_deep_deep import AlexNet_res_deep_deep
-from AlexNet.AlexNet_res_deep_deep_drop import AlexNet_res_deep_deep_drop
+from Validation.AlexNet_res_drop1 import AlexNet_res_drop1
+from Validation.AlexNet_res_drop2 import AlexNet_res_drop2
+from Validation.AlexNet_res_drop3 import AlexNet_res_drop3
+from Validation.AlexNet_res_drop4 import AlexNet_res_drop4
 
 # Model Save 이름 지정
 
-LOAD_MODEL = AlexNet_res_deep_deep_drop
-SAVE_NAME = "AlexNet_res_deep_deep_drop_d_0.1"
+LOAD_MODEL = AlexNet_res_drop1
+SAVE_NAME = "AlexNet_res_drop1"
 DATASET = "C10"
-LOG_VERSION = "d_0.3"
+LOG_VERSION = "d_03_c_02"
 
 # ChcekPoint, Log 경로 지정
 CHECKPOINT = f"checkpoints/{SAVE_NAME}_{DATASET}.h5"
@@ -30,8 +25,8 @@ NUM_CLASSES = 10
 
 # Model Hyperparameters
 NUM_FILTER = 64
-DROPOUT_RATE = 0.1
-COMPRESSION = 0.25
+DROPOUT_RATE = 0.3
+C_DROPOUT_RATE = 0.2
 
 # Learning Hyperparameters
 ITERATION = 1
@@ -61,7 +56,7 @@ model = LOAD_MODEL()._build(
     num_class=NUM_CLASSES,
     num_filter=NUM_FILTER,
     dropout_rate=DROPOUT_RATE,
-    compression=COMPRESSION,
+    conv_dropout_rate=C_DROPOUT_RATE,
 )
 model.summary()
 
