@@ -2,21 +2,19 @@ import tensorflow as tf
 from keras import callbacks
 from dataset import load_cifar10, augment_image
 
-from Validation.AlexNet_res_drop1 import AlexNet_res_drop1
-from Validation.AlexNet_res_drop2 import AlexNet_res_drop2
-from Validation.AlexNet_res_drop3 import AlexNet_res_drop3
-from Validation.AlexNet_res_drop4 import AlexNet_res_drop4
+from Validation.Plain14 import Plain14
+from Validation.ComNet import ComNet
+from Validation.ComNet_P import ComNet_P
 
 # Model Save 이름 지정
-
-LOAD_MODEL = AlexNet_res_drop1
-SAVE_NAME = "AlexNet_res_drop1"
+LOAD_MODEL = ComNet
+SAVE_NAME = "ComNet"
 DATASET = "C10"
-LOG_VERSION = "d_03_c_02"
+VERSION = "original"
 
 # ChcekPoint, Log 경로 지정
-CHECKPOINT = f"checkpoints/{SAVE_NAME}_{DATASET}.h5"
-LOG = f"./logs/{SAVE_NAME}_{DATASET}_{LOG_VERSION}_logs"
+CHECKPOINT = f"checkpoints/{SAVE_NAME}_{DATASET}_{VERSION}.h5"
+LOG = f"./logs/{SAVE_NAME}_{DATASET}_{VERSION}_logs"
 # LOG = f"./logs/{SAVE_NAME}_{DATASET}_logs"
 
 # DataSet Hyperparameters
@@ -25,8 +23,8 @@ NUM_CLASSES = 10
 
 # Model Hyperparameters
 NUM_FILTER = 64
-DROPOUT_RATE = 0.3
-C_DROPOUT_RATE = 0.2
+DROPOUT_RATE = 0.2
+C_DROPOUT_RATE = 0.1
 
 # Learning Hyperparameters
 ITERATION = 1
@@ -53,10 +51,9 @@ train_images, train_labels, test_images, test_labels = load_cifar10()
 # Load Model
 model = LOAD_MODEL()._build(
     input_shape=INPUT_SHAPE,
-    num_class=NUM_CLASSES,
-    num_filter=NUM_FILTER,
-    dropout_rate=DROPOUT_RATE,
-    conv_dropout_rate=C_DROPOUT_RATE,
+    classes=NUM_CLASSES,
+    filters=NUM_FILTER,
+    name=f"{SAVE_NAME}",
 )
 model.summary()
 
