@@ -104,7 +104,7 @@ class Plain14:
 
 if __name__ == "__main__":
     model = Plain14()._build(
-        input_shape=(32, 32, 3), classes=10, filters=64, name="Plain14"
+        input_shape=(32, 32, 3), classes=10, filters=64, name=model_name
     )
     model.summary()
 

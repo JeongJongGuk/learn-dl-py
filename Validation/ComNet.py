@@ -106,7 +106,7 @@ class ComNet:
 
         return x
 
-    def _head(self, x, classes, name):
+    def _head(self, x, classes, dropout_rate, name):
         """_head
 
         Args:
@@ -115,13 +115,15 @@ class ComNet:
             name: string, head name.
         """
         x = layers.GlobalAveragePooling2D(name=name + "_avg_pool")(x)
+        if dropout_rate:
+            x = layers.Dropout(dropout_rate)(x)
         x = layers.Dense(
             units=classes, activation="softmax", name=name + "_predictions"
         )(x)
 
         return x
 
-    def _build(self, input_shape, classes, filters, name):
+    def _build(self, input_shape, classes, filters, dropout_rate, name):
         """_build
 
         Args:
@@ -170,7 +172,7 @@ class ComNet:
             blocks=2,
             name=name + "_Layer3",
         )
-        output = self._head(x=x, classes=classes, name=name)
+        output = self._head(x, classes, dropout_rate, name=name)
 
         # Model Build
         model = tf.keras.models.Model(
@@ -182,7 +184,7 @@ class ComNet:
 
 if __name__ == "__main__":
     model = ComNet()._build(
-        input_shape=(32, 32, 3), classes=10, filters=64, name="ComNet"
+        input_shape=(32, 32, 3), classes=10, filters=64, dropout_rate=0.2, name="ComNet"
     )
     model.summary()
 

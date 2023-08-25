@@ -53,6 +53,7 @@ model = LOAD_MODEL()._build(
     input_shape=INPUT_SHAPE,
     classes=NUM_CLASSES,
     filters=NUM_FILTER,
+    dropout_rate=DROPOUT_RATE,
     name=f"{SAVE_NAME}",
 )
 model.summary()
