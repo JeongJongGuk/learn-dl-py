@@ -2,13 +2,14 @@ import tensorflow as tf
 from keras import callbacks
 from dataset import load_cifar10, augment_image
 
-from Validation.Plain14 import Plain14
+from Validation.Plain26 import Plain26
 from Validation.ComNet import ComNet
+from Validation.ComNet_D import ComNet_D
 from Validation.ComNet_P import ComNet_P
 
 # Model Save 이름 지정
-LOAD_MODEL = ComNet
-SAVE_NAME = "ComNet"
+LOAD_MODEL = ComNet_P
+SAVE_NAME = "ComNet_P"
 DATASET = "C10"
 VERSION = "original"
 
@@ -23,7 +24,7 @@ NUM_CLASSES = 10
 
 # Model Hyperparameters
 NUM_FILTER = 64
-DROPOUT_RATE = 0.2
+DROPOUT_RATE = 0.3
 C_DROPOUT_RATE = 0.1
 
 # Learning Hyperparameters

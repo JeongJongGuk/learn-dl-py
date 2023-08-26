@@ -2,20 +2,20 @@ import tensorflow as tf
 from keras import layers
 from keras.utils import plot_model
 
-model_name = "Plain14"
+model_name = "Plain26"
 
 """
 1 * _initial = 1 * Conv2D
 3 * _stack = 4 * Conv2D
 1 * _head = 1 Dense
 
-Total layers = 14
-Total params: 2,739,658
+Total layers = 26
+Total params: 2739658 (10.45 MB)
 """
 
 
-class Plain14:
-    """Plain14"""
+class Plain26:
+    """Plain26"""
 
     def __init__(self) -> None:
         pass
@@ -103,7 +103,7 @@ class Plain14:
 
 
 if __name__ == "__main__":
-    model = Plain14()._build(
+    model = Plain26()._build(
         input_shape=(32, 32, 3), classes=10, filters=64, name=model_name
     )
     model.summary()

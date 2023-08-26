@@ -2,7 +2,7 @@ import tensorflow as tf
 from keras import layers
 from keras.utils import plot_model
 
-model_name = "ComNet_P"
+model_name = "ComNet_PS"
 
 """
 1 * _initial = 1 * Conv2D
@@ -11,23 +11,41 @@ model_name = "ComNet_P"
 1 * _head = 1 Dense
 
 Preact_ResNet
+SENet
 
-Total layers = 26
-Total params: 6214218 (23.71 MB)
+Total layers = 14
+Total params: 2,803,970
 """
 
 
-class ComNet_P:
-    """ComNet_P"""
+class ComNet_PS:
+    """ComNet_PS"""
 
     def __init__(
         self,
     ):
         pass
 
-    def _block(
-        self, x, filters, kernel_size=3, stride=1, conv_shortcut=False, name=None
-    ):
+    def _se_block(self, x, ratio, name):
+        """_se_block
+
+        Args:
+            x: input tensor.
+            ratio: integer, reduction ratio.
+            name: string, block name.
+        """
+        n_channel = int(x.shape[-1])
+
+        se = layers.GlobalAveragePooling2D(name=name + "_avg_pool")(x)
+        se = layers.Dense(n_channel / ratio, activation="relu", name=name + "_dense_1")(
+            se
+        )
+        se = layers.Dense(n_channel, activation="sigmoid", name=name + "_dense_2")(se)
+        x = layers.Multiply(name=name + "_mul")([x, se])
+
+        return x
+
+    def _block(self, x, filters, stride=1, conv_short=True, pool=False, name=None):
         """_block
 
         Args:
@@ -40,28 +58,26 @@ class ComNet_P:
         preact = layers.BatchNormalization(name=name + "_bn_preact")(x)
         preact = layers.Activation("relu", name=name + "_relu_preact")(preact)
 
-        if conv_shortcut:
+        if conv_short:
             shortcut = layers.Conv2D(
-                filters,
-                kernel_size,
+                filters=filters,
+                kernel_size=1,
                 strides=stride,
                 padding="same",
-                use_bias=True,
+                use_bias=False,
                 kernel_initializer="HeNormal",
                 name=name + "_1x1conv_shortcut",
             )(preact)
         else:
-            if stride > 1:
-                shortcut = layers.MaxPooling2D(
-                    pool_size=1, strides=stride, name=name + "_max_pool"
-                )(x)
+            if pool:
+                shortcut = layers.MaxPooling2D(name=name + "_max_pool")(x)
             else:
                 shortcut = x
 
         # Conv2D_1
         x = layers.Conv2D(
-            filters,
-            kernel_size,
+            filters=filters,
+            kernel_size=3,
             strides=stride,
             padding="same",
             use_bias=False,
@@ -73,8 +89,8 @@ class ComNet_P:
         x = layers.BatchNormalization(name=name + "_bn_1")(x)
         x = layers.Activation("relu", name=name + "_relu_1")(x)
         x = layers.Conv2D(
-            filters,
-            kernel_size,
+            filters=filters,
+            kernel_size=3,
             strides=1,
             padding="same",
             use_bias=True,
@@ -82,12 +98,15 @@ class ComNet_P:
             name=name + "_3x3conv_2",
         )(x)
 
+        # SE_Block
+        x = self._se_block(x=x, ratio=16, name=name + "_se")
+
         # Residual_Connection
         x = layers.Add(name=name + "_residual_connection")([x, shortcut])
 
         return x
 
-    def _stack(self, x, filters, blocks, stride1=2, flag=True, name=None):
+    def _stack(self, x, filters, conv_short, pool, name):
         """_stack
 
         Args:
@@ -95,13 +114,28 @@ class ComNet_P:
             filters: integer, filters of the Conv2D
             blocks: integer, blocks in the stack.
             name: string, stack name.
-        Returns:
-            output tensor
         """
-        x = self._block(x, filters, conv_shortcut=flag, name=name + "_block1")
-        for index in range(2, blocks):
-            x = self._block(x, filters, name=name + f"_block{index}")
-        x = self._block(x, filters, stride=stride1, name=name + f"_block{blocks}")
+        if pool:
+            stride = 2
+        else:
+            stride = 1
+
+        x = self._block(
+            x,
+            filters,
+            stride=1,
+            conv_short=conv_short,
+            pool=False,
+            name=name + f"_block1",
+        )
+        x = self._block(
+            x,
+            filters,
+            stride=stride,
+            conv_short=False,
+            pool=pool,
+            name=name + f"_block2",
+        )
 
         return x
 
@@ -115,9 +149,9 @@ class ComNet_P:
         """
         x = layers.BatchNormalization(name=name + "_bn")(x)
         x = layers.Activation("relu", name=name + "_relu")(x)
-        x = layers.GlobalAveragePooling2D(name=name + "_avg_pool")(x)
         if dropout_rate:
             x = layers.Dropout(dropout_rate)(x)
+        x = layers.GlobalAveragePooling2D(name=name + "_avg_pool")(x)
         x = layers.Dense(
             units=classes, activation="softmax", name=name + "_predictions"
         )(x)
@@ -147,30 +181,30 @@ class ComNet_P:
 
         # 1
         x = self._stack(
-            x,
-            filters,
-            4,
-            stride1=1,
-            flag=False,
+            x=x,
+            filters=filters,
+            conv_short=False,
+            pool=True,
             name=name + "_Layer1",
         )
 
         # 2
         x = self._stack(
-            x,
-            filters * 2,
-            4,
+            x=x,
+            filters=filters * 2,
+            conv_short=True,
+            pool=True,
             name=name + "_Layer2",
         )
 
         # 3
         x = self._stack(
-            x,
-            filters * 4,
-            4,
+            x=x,
+            filters=filters * 4,
+            conv_short=True,
+            pool=False,
             name=name + "_Layer3",
         )
-
         output = self._head(x, classes, dropout_rate, name=name)
 
         # Model Build
@@ -182,7 +216,7 @@ class ComNet_P:
 
 
 if __name__ == "__main__":
-    model = ComNet_P()._build(
+    model = ComNet_PS()._build(
         input_shape=(32, 32, 3),
         classes=10,
         filters=64,
